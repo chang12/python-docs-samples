@@ -17,11 +17,11 @@
 import google.auth
 import google.auth.compute_engine.credentials
 import google.auth.iam
-from google.auth.transport.requests import Request
 import google.oauth2.credentials
 import google.oauth2.service_account
 import requests
-
+from google.auth.transport.requests import Request
+import os
 
 IAM_SCOPE = 'https://www.googleapis.com/auth/iam'
 OAUTH_TOKEN_URI = 'https://www.googleapis.com/oauth2/v4/token'
@@ -44,12 +44,12 @@ def trigger_dag(data, context=None):
     # Navigate to your webserver's login page and get this from the URL
     # Or use the script found at
     # https://github.com/GoogleCloudPlatform/python-docs-samples/blob/master/composer/rest/get_client_id.py
-    client_id = 'YOUR-CLIENT-ID'
+    client_id = '41454429176-rujv295r9sl8s4lqomm4dbi6rtmp417b.apps.googleusercontent.com'
     # This should be part of your webserver's URL:
     # {tenant-project-id}.appspot.com
-    webserver_id = 'YOUR-TENANT-PROJECT'
+    webserver_id = 'z36d563287ddd8650-tp'
     # The name of the DAG you wish to trigger
-    dag_name = 'composer_sample_trigger_response_dag'
+    dag_name = 'dag_test'
     webserver_url = (
         'https://'
         + webserver_id
@@ -85,8 +85,8 @@ def make_iap_request(url, client_id, method='GET', **kwargs):
 
     # Figure out what environment we're running in and get some preliminary
     # information about the service account.
-    bootstrap_credentials, _ = google.auth.default(
-        scopes=[IAM_SCOPE])
+    os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = './kr-co-vcnc-tada-8c7737267e91.json'
+    bootstrap_credentials, _ = google.auth.default(scopes=[IAM_SCOPE])
 
     # For service account's using the Compute Engine metadata service,
     # service_account_email isn't available until refresh is called.
@@ -121,8 +121,7 @@ def make_iap_request(url, client_id, method='GET', **kwargs):
     # service_account_credentials gives us a JWT signed by the service
     # account. Next, we use that to obtain an OpenID Connect token,
     # which is a JWT signed by Google.
-    google_open_id_connect_token = get_google_open_id_connect_token(
-        service_account_credentials)
+    google_open_id_connect_token = get_google_open_id_connect_token(service_account_credentials)
 
     # Fetch the Identity-Aware Proxy-protected URL, including an
     # Authorization header containing "Bearer " followed by a
@@ -165,8 +164,7 @@ def get_google_open_id_connect_token(service_account_credentials):
     modified version of it to get an OpenID Connect token.)
     """
 
-    service_account_jwt = (
-        service_account_credentials._make_authorization_grant_assertion())
+    service_account_jwt = (service_account_credentials._make_authorization_grant_assertion())
     request = google.auth.transport.requests.Request()
     body = {
         'assertion': service_account_jwt,
@@ -178,3 +176,7 @@ def get_google_open_id_connect_token(service_account_credentials):
 # END COPIED IAP CODE
 
 # [END composer_trigger]
+
+
+if __name__ == '__main__':
+    trigger_dag(data=dict(conf='{\"key\":\"value\"}'))
