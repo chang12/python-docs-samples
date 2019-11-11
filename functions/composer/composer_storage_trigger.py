@@ -28,17 +28,9 @@ IAM_SCOPE = 'https://www.googleapis.com/auth/iam'
 OAUTH_TOKEN_URI = 'https://www.googleapis.com/oauth2/v4/token'
 
 
-def trigger_dag(data, context=None):
-    """Makes a POST request to the Composer DAG Trigger API
-
-    When called via Google Cloud Functions (GCF),
-    data and context are Background function parameters.
-
-    For more info, refer to
-    https://cloud.google.com/functions/docs/writing/background#functions_background_parameters-python
-
-    To call this function from a Python script, omit the ``context`` argument
-    and pass in a non-null value for the ``data`` argument.
+def trigger_dag(data):
+    """
+    Makes a POST request to the Composer DAG Trigger API
     """
 
     # Fill in with your Composer info here
@@ -142,19 +134,16 @@ def get_google_open_id_connect_token(service_account_credentials):
     shows how to get an OAuth2 access token; this code is using a
     modified version of it to get an OpenID Connect token.)
     """
+    from google.oauth2._client import _JWT_GRANT_TYPE, _token_endpoint_request
 
-    service_account_jwt = (service_account_credentials._make_authorization_grant_assertion())
+    service_account_jwt = service_account_credentials._make_authorization_grant_assertion()
     request = google.auth.transport.requests.Request()
     body = {
         'assertion': service_account_jwt,
-        'grant_type': google.oauth2._client._JWT_GRANT_TYPE,
+        'grant_type': _JWT_GRANT_TYPE,
     }
-    token_response = google.oauth2._client._token_endpoint_request(
-        request, OAUTH_TOKEN_URI, body)
+    token_response = _token_endpoint_request(request, OAUTH_TOKEN_URI, body)
     return token_response['id_token']
-# END COPIED IAP CODE
-
-# [END composer_trigger]
 
 
 if __name__ == '__main__':
