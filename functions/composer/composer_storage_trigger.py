@@ -72,7 +72,7 @@ def make_iap_request(url, client_id, method='GET', **kwargs):
 
     # Figure out what environment we're running in and get some preliminary
     # information about the service account.
-    os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = './kr-co-vcnc-tada-706901c009d6.json'
+    os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = './kr-co-vcnc-tada-7cb37e11e075.json'
     bootstrap_credentials, _ = google.auth.default(scopes=[IAM_SCOPE])
 
     signer_email = bootstrap_credentials.service_account_email
@@ -147,4 +147,4 @@ def get_google_open_id_connect_token(service_account_credentials):
 
 
 if __name__ == '__main__':
-    trigger_dag(data=dict(conf='{\"date_kr\":\"2019-11-11\"}'))
+    trigger_dag(data=dict(conf=dict(date_kr='2019-11-12')))
