@@ -14,6 +14,8 @@
 
 # [START composer_trigger]
 
+import os
+
 import google.auth
 import google.auth.compute_engine.credentials
 import google.auth.iam
@@ -21,7 +23,6 @@ import google.oauth2.credentials
 import google.oauth2.service_account
 import requests
 from google.auth.transport.requests import Request
-import os
 
 IAM_SCOPE = 'https://www.googleapis.com/auth/iam'
 OAUTH_TOKEN_URI = 'https://www.googleapis.com/oauth2/v4/token'
@@ -89,9 +90,13 @@ def make_iap_request(url, client_id, method='GET', **kwargs):
     # Construct OAuth 2.0 service account credentials using the signer
     # and email acquired from the bootstrap credentials.
     service_account_credentials = google.oauth2.service_account.Credentials(
-        signer, signer_email, token_uri=OAUTH_TOKEN_URI, additional_claims={
+        signer,
+        signer_email,
+        token_uri=OAUTH_TOKEN_URI,
+        additional_claims={
             'target_audience': client_id
-        })
+        }
+    )
     # service_account_credentials gives us a JWT signed by the service
     # account. Next, we use that to obtain an OpenID Connect token,
     # which is a JWT signed by Google.
@@ -153,4 +158,4 @@ def get_google_open_id_connect_token(service_account_credentials):
 
 
 if __name__ == '__main__':
-    trigger_dag(data=dict(conf='{\"key\":\"value\"}'))
+    trigger_dag(data=dict(conf='{\"date_kr\":\"2019-11-11\"}'))
